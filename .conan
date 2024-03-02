@@ -1,0 +1,1 @@
+conan install -s build_type=Debug -c tools.system.package_manager:mode=install . --update --build=missing --lockfile=conan.lock
