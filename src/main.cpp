@@ -1,5 +1,6 @@
 #include <iostream>
 #include "opencv2/opencv.hpp"
+#include "stream/stream.hpp"
 
 int main()
 {
@@ -11,6 +12,7 @@ int main()
     cv::imshow("test", image);
     cv::waitKey(0);
     std::cout << "Hello, World!" << std::endl;
+    Stream stream;
     return 0;
 }
 
