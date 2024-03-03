@@ -7,7 +7,7 @@ class MyProjectConan(ConanFile):
     version = "0.0.1"
 
     requires = [
-        "opencv/4.5.2",
+        "opencv/4.5.1",
     ]
     
     default_options = {
