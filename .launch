@@ -1,4 +1,4 @@
 PROJECT="/home/lewelotki/Desktop/cpp_refactor";
 cd $PROJECT;
-./.rebuild;
+./.cmp;
 ./.run;
