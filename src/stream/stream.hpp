@@ -1,6 +1,9 @@
 #pragma once
 #include <iostream>
-#include "opencv2/opencv.hpp"
+// #include "opencv2/opencv.hpp"
+#include <opencv2/core.hpp>
+#include <opencv2/videoio.hpp>
+#include <opencv2/highgui.hpp>
 #include <string>
 
 class Stream
@@ -9,12 +12,13 @@ class Stream
     std::string output_dir;
     std::string left_dir;
     std::string right_dir;
+    cv::VideoCapture cap;
 
     public:
         
         Stream();
         void run(std::string mode, std::string output_dir, int
-        frame_limit=(int)1e3);
+        frame_limit);
 
     private:
 
