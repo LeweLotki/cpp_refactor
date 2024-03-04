@@ -1,4 +1,8 @@
 PROJECT="/home/lewelotki/Desktop/cpp_refactor";
 cd $PROJECT;
+rm -rf build/           
+mkdir build
+cmake -S . -B build 
 ./.cmp;
 ./.run;
+

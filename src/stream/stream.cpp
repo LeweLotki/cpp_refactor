@@ -7,6 +7,7 @@ Stream::Stream()
     int api_id = cv::CAP_ANY;
     cap = cv::VideoCapture(device_id + api_id);
     // cap.open(device_id + api_id);
+    // cap = cv::VideoCapture(0, cv::CAP_V4L);
     if (!cap.isOpened())
     {
         std::cerr << "ERROR! Unable to open camera\n";
