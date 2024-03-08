@@ -1,6 +1,5 @@
 #pragma once
 #include <iostream>
-// #include "opencv2/opencv.hpp"
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
@@ -8,17 +7,22 @@
 
 class Stream
 {
-    static unsigned int _frame_count;
+    unsigned int frame_count;
     std::string output_dir;
     std::string left_dir;
     std::string right_dir;
+    int device_id;
+    int api_id;
     cv::VideoCapture cap;
 
     public:
         
         Stream();
-        void run(std::string mode, std::string output_dir, int
-        frame_limit);
+        void run(
+            std::string mode="display_mode",
+            std::string output_dir="../stream_output",
+            int frame_limit=(int)1e3
+        );
 
     private:
 
@@ -31,5 +35,6 @@ class Stream
         cv::Mat subdivide_camera_image(cv::Mat frame);
         void display_images(cv::Mat frame);
         void save_images(cv::Mat frame);
+        void open_camera();
 };
 

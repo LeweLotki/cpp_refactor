@@ -3,22 +3,13 @@
 
 Stream::Stream()
 {
-    int device_id = 0;
-    int api_id = cv::CAP_ANY;
-    cap = cv::VideoCapture(device_id + api_id);
-    // cap.open(device_id + api_id);
-    // cap = cv::VideoCapture(0, cv::CAP_V4L);
-    if (!cap.isOpened())
-    {
-        std::cerr << "ERROR! Unable to open camera\n";
-    }
+    device_id = 0;
+    api_id = cv::CAP_ANY;
+    frame_count = 0;
+
 }
 
-void Stream::run(
-    std::string mode="display_mode",
-    std::string output_dir="../stream_output",
-    int frame_limit=(int)1e3
-    )
+void Stream::run(std::string mode, std::string output_dir, int frame_limit)
 {
     if (mode == "display_mode")
     {
@@ -28,14 +19,15 @@ void Stream::run(
 
 void Stream::display_mode()
 {
-    bool fram_saved = false;
+    bool frame_saved = false;
     bool ret;
     cv::Mat frame;
+
+    this->open_camera();
 
     while(true)
     {
         cap.read(frame);
-        // Stream::_frame_count += 1; 
         
         if (frame.empty())
         {
@@ -44,5 +36,16 @@ void Stream::display_mode()
         }
         imshow("stream", frame);
         if (cv::waitKey(5) >= 0) { break; }
+        frame_count += 1;
+    }
+}
+
+void Stream::open_camera()
+{
+    cap = cv::VideoCapture(device_id + api_id);
+    
+    if (!cap.isOpened())
+    {
+        std::cerr << "ERROR! Unable to open camera\n";
     }
 }
