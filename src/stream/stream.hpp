@@ -4,13 +4,15 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
 #include <string>
+#include <vector>
+#include <boost/filesystem.hpp>
 
 class Stream
 {
-    unsigned int frame_count;
-    std::string output_dir;
-    std::string left_dir;
-    std::string right_dir;
+    unsigned int frame_count = 0;
+    boost::filesystem::path output_dir;
+    boost::filesystem::path left_dir;
+    boost::filesystem::path right_dir;
     int device_id;
     int api_id;
     cv::VideoCapture cap;
@@ -22,7 +24,7 @@ class Stream
         Stream();
         void run(
             std::string mode="display_mode",
-            std::string output_dir="../stream_output",
+            boost::filesystem::path output_dir="../stream_output",
             int frame_limit=(int)1e3
         );
         void set_resolution(int* resolution[]);
@@ -34,8 +36,8 @@ class Stream
         void save_mode(int frame_limit=(int)1e3);
         void void_mode(int frame_limit=(int)1e3);
 
-        void create_output_dir(std::string path);
-        cv::Mat subdivide_camera_image(cv::Mat frame);
+        void create_output_dir();
+        std::vector<cv::Mat> subdivide_camera_image(cv::Mat frame);
         void display_images(cv::Mat frame);
         void save_images(cv::Mat frame);
         void open_camera();
