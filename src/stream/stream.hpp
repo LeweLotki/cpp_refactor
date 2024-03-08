@@ -14,6 +14,8 @@ class Stream
     int device_id;
     int api_id;
     cv::VideoCapture cap;
+    int resolution[2];
+    int frame_limit;
 
     public:
         
@@ -23,6 +25,7 @@ class Stream
             std::string output_dir="../stream_output",
             int frame_limit=(int)1e3
         );
+        void set_resolution(int* resolution[]);
 
     private:
 
