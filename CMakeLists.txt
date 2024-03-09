@@ -1,22 +1,19 @@
 cmake_minimum_required(VERSION 3.15)
-project(your_project_name)
+project(stereovision_path_planning)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# Find the OpenCV package
 find_package(OpenCV REQUIRED)
+find_package(Boost REQUIRED COMPONENTS filesystem system)
 
-# Print OpenCV version (optional, for debugging purposes)
-message(STATUS "Using OpenCV version ${OpenCV_VERSION}")
-
-# Automatically add all .cpp files in the src directory to the project
 file(GLOB_RECURSE PROJECT_SOURCES CONFIGURE_DEPENDS "src/*.cpp")
-add_executable(your_executable_name ${PROJECT_SOURCES})
 
-# Link your executable with the OpenCV libraries
-target_link_libraries(your_executable_name PRIVATE ${OpenCV_LIBS})
+add_executable(stereo ${PROJECT_SOURCES})
 
-# If you need to include directories for OpenCV headers (usually not necessary as find_package handles it)
-target_include_directories(your_executable_name PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_link_libraries(stereo PRIVATE ${OpenCV_LIBS})
+target_link_libraries(stereo PRIVATE ${Boost_LIBRARIES})
+
+target_include_directories(stereo PRIVATE ${OpenCV_INCLUDE_DIRS})
+target_include_directories(stereo PRIVATE ${Boost_INCLUDE_DIRS})
 
