@@ -18,13 +18,31 @@ Stream::Stream()
     frame_count = 0;
 }
 
-void Stream::run(std::string mode, boost::filesystem::path output_dir, int frame_limit)
+void Stream::run(std::string mode, filesystem::path output_dir, int frame_limit)
 {
     this->output_dir = output_dir;
     this->frame_limit = frame_limit;
-    if (mode == "display_mode")
+
+    switch ( resolve_mode(mode) )
     {
-        this -> display_mode();
+        case DISPLAY_MODE:
+            this -> display_mode();
+            break;
+        case SAVE_MODE:
+            this -> save_mode();
+            break;
+        case SAVE_DISPLAY_MODE:
+            this -> save_display_mode();
+            break;
+        case VOID_MODE:
+            this -> void_mode();
+            break;
+        case INVALID_MODE:
+            std::cerr << "ERROR: incorrect mode chosen!";
+            break;
+        default:
+            std::cerr << "ERROR: incorrect mode chosen!";
+            break;
     }
 }
 
@@ -34,6 +52,8 @@ void Stream::display_mode()
     bool save_mode = false;
     bool ret;
     cv::Mat frame;
+
+    if (frame_limit < 1) { frame_limit = -1; }
 
     this->open_camera();
 
@@ -50,7 +70,115 @@ void Stream::display_mode()
         imshow("stream", frame);
 
         if ((char)cv::waitKey(29) == (char)ESC_KEY) { break; } 
-        if ((char)cv::waitKey(31) == (char)s_KEY || save_mode) 
+        if (frame_limit != -1 && ((char)cv::waitKey(31) == (char)s_KEY || save_mode)) 
+        {
+            if (!frame_saved)
+            {
+                this -> create_output_dir();
+                this->resolution[0] = frame.cols;
+                this->resolution[1] = frame.rows;
+                frame_saved = true;
+                save_mode = true;
+            }
+            this -> save_images(frame);
+        }
+        frame_count += 1;
+    }
+}
+
+void Stream::save_display_mode()
+{
+    bool ret;
+    bool first_iter = true;
+    cv::Mat frame;
+    this -> create_output_dir();
+
+    this->open_camera();
+
+    if (frame_limit < 1) { frame_limit = (int)1e3; }
+
+    while(frame_limit > frame_count)
+    {
+        cap.read(frame);
+        
+        if (frame.empty())
+        {
+            std::cerr << "ERROR! empty image\n";
+            break;
+        }
+
+        imshow("stream", frame);
+
+        if ((char)cv::waitKey(29) == (char)ESC_KEY) { break; } 
+        
+        if (first_iter)
+        {
+            this->resolution[0] = frame.cols;
+            this->resolution[1] = frame.rows;
+            first_iter = false;
+        }
+        this -> save_images(frame);
+        frame_count += 1;
+    }
+}
+
+void Stream::save_mode()
+{
+    bool ret;
+    bool first_iter = true;
+    cv::Mat frame;
+    this -> create_output_dir();
+
+    this->open_camera();
+
+    if (frame_limit < 1) { frame_limit = (int)1e3; }
+
+    while(frame_limit > frame_count)
+    {
+        cap.read(frame);
+        
+        if (frame.empty())
+        {
+            std::cerr << "ERROR! empty image\n";
+            break;
+        }
+
+        if ((char)cv::waitKey(29) == (char)ESC_KEY) { break; } 
+        
+        if (first_iter)
+        {
+            this->resolution[0] = frame.cols;
+            this->resolution[1] = frame.rows;
+            first_iter = false;
+        }
+        this -> save_images(frame);
+        frame_count += 1;
+    }
+}
+
+void Stream::void_mode()
+{
+    bool frame_saved = false;
+    bool save_mode = false;
+    bool ret;
+    cv::Mat frame;
+
+    if (frame_limit < 1) { frame_limit = -1; }
+
+    this->open_camera();
+
+    while(frame_limit == -1 || frame_limit > frame_count)
+    {
+        cap.read(frame);
+        
+        if (frame.empty())
+        {
+            std::cerr << "ERROR! empty image\n";
+            break;
+        }
+
+        if ((char)cv::waitKey(29) == (char)ESC_KEY) { break; } 
+        if (frame_limit != -1 && ((char)cv::waitKey(31) == (char)s_KEY || save_mode)) 
         {
             if (!frame_saved)
             {
@@ -122,5 +250,22 @@ std::vector<cv::Mat> Stream::subdivide_camera_image(cv::Mat frame)
     std::vector<cv::Mat> frames { frame_left, frame_right };    
 
     return frames;
+}
+
+Stream::Modes Stream::resolve_mode(std::string mode)
+{
+    static const std::map<std::string, Modes> modes_map {
+        { "display_mode", DISPLAY_MODE },
+        { "save_mode", SAVE_MODE },
+        { "save_display_mode", SAVE_DISPLAY_MODE },
+        { "void_mode", VOID_MODE }
+    };
+
+    auto itr = modes_map.find(mode);
+    if( itr != modes_map.end() ) {
+        return itr->second;
+    }
+
+    return INVALID_MODE;
 }
 
