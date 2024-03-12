@@ -32,7 +32,7 @@ class Stream
         
         Stream();
         void run(
-            std::string mode="display_mode",
+            const std::string& mode="display_mode",
             boost::filesystem::path output_dir="../stream_output",
             int frame_limit=(int)1e3
         );
@@ -50,6 +50,6 @@ class Stream
         void display_images(cv::Mat frame);
         void save_images(cv::Mat frame);
         void open_camera();
-        Modes resolve_mode(std::string mode);
+        Modes resolve_mode(const std::string& mode);
 };
 

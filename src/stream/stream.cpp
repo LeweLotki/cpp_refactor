@@ -18,7 +18,7 @@ Stream::Stream()
     frame_count = 0;
 }
 
-void Stream::run(std::string mode, filesystem::path output_dir, int frame_limit)
+void Stream::run(const std::string& mode, filesystem::path output_dir, int frame_limit)
 {
     this->output_dir = output_dir;
     this->frame_limit = frame_limit;
@@ -252,7 +252,7 @@ std::vector<cv::Mat> Stream::subdivide_camera_image(cv::Mat frame)
     return frames;
 }
 
-Stream::Modes Stream::resolve_mode(std::string mode)
+Stream::Modes Stream::resolve_mode(const std::string& mode)
 {
     static const std::map<std::string, Modes> modes_map {
         { "display_mode", DISPLAY_MODE },
