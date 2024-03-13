@@ -1,32 +1,31 @@
 #pragma once
-
 #include <opencv2/core.hpp>
 #include <vector>
 #include <string>
-
+#include <boost/filesystem>
+#include <vector>
 class StereoCalibration {
-public:
-    StereoCalibration(const std::string& calib_images_dir_left, const std::string& calib_images_dir_right, const cv::Size& chessboard_size, const cv::Size& frame_size, const double& size_of_chessboard_squares_mm);
 
-    void findChessboardCorners(cv::TermCriteria criteria);
-    void calibrateCameras();
-    void stereoCalibrate();
+    int chessboard_size[2] = { 7, 7 };
+    int frame_size[2] = { 672, 376 };
+    int size_of_chessboard_squares_mm = 20;
 
-    void saveCalibrationFiles(const std::string& output_dir);
+    // boost::filesystem::path
+    // potem dorób dla L i R z join
+    boost::filesystem::path calibration_images_dir;
+    boost::filesystem::path output_dir;
 
-private:
-    cv::Size chessboard_size_;
-    cv::Size frame_size_;
-    double size_of_chessboard_squares_mm_;
+    std::vector<std::vector<float>> objp;
+    std::vector<std::vector<float>> obj_points;
+    std::vector<std::vector<float>> img_points_L;
+    std::vector<std::vector<float>> img_points_R;
 
-    std::vector<cv::Point3f> objpoints_;
-    std::vector<std::vector<cv::Point2f>> imgpointsL_;
-    std::vector<std::vector<cv::Point2f>> imgpointsR_;
+    float criteria[3] = {
+        (float)cv::TERM_CRITERIA_EPS + (float)cv::TERM_CRITERIA_MAX_ITER,
+        30, 
+        0.001
+    };
 
-    cv::Mat cameraMatrixL_;
-    cv::Mat distL_;
-    cv::Mat cameraMatrixR_;
-    cv::Mat distR_;
-    cv::Mat R_;
-    cv::Mat T_;
+    // line 26
+
 };
