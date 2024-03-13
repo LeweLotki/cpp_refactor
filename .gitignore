@@ -6,3 +6,5 @@ CMakePresets.json
 *.vim
 CMakeFiles/*
 temp
+test
+

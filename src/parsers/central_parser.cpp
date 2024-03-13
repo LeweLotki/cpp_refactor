@@ -5,28 +5,30 @@
 namespace po = boost::program_options;
 
 po::variables_map CentralParser::parseCommandLine(int argc, char* argv[]) {
-    po::options_description global("Global Options");
-    global.add_options()
+    
+    po::options_description globalOptions("Global Options");
+    globalOptions.add_options()
         ("help,h", "produce help message")
-        ("module,m", po::value<std::string>()->required(), "module to run");
+        ("module,m", po::value<std::string>(), "module to run");
 
     po::variables_map vm;
-    po::store(po::parse_command_line(argc, argv, global), vm);
+    
+    po::options_description cmdline_options = globalOptions;
+    cmdline_options.add(StreamParser::getOptions());
+    
+    po::store(po::command_line_parser(argc, argv).options(cmdline_options).run(), vm);
 
     if (vm.count("help")) {
-        std::cout << global << "\n";
+        std::cout << globalOptions << std::endl;
         exit(0);
     }
 
-    po::notify(vm); // Throws if 'module' is not provided
-
-    // Merge module-specific options based on the selected module
-    if (vm["module"].as<std::string>() == "stream") {
-        auto streamOptions = StreamParser::getOptions();
-        global.add(streamOptions);
-        po::store(po::parse_command_line(argc, argv, global), vm);
-        po::notify(vm); // Update vm with the new options, required for later access
+    if (!vm.count("module")) {
+        std::cerr << "Error: '--module' option is required." << std::endl;
+        exit(1);
     }
+
+    po::notify(vm);
 
     return vm;
 }

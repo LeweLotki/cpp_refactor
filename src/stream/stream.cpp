@@ -38,10 +38,10 @@ void Stream::run(const std::string& mode, filesystem::path output_dir, int frame
             this -> void_mode();
             break;
         case INVALID_MODE:
-            std::cerr << "ERROR: incorrect mode chosen!";
+            std::cerr << "ERROR: incorrect mode chosen.";
             break;
         default:
-            std::cerr << "ERROR: incorrect mode chosen!";
+            std::cerr << "ERROR: incorrect mode chosen.";
             break;
     }
 }

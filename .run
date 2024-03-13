@@ -1,3 +1,3 @@
 PROJECT="/home/lewelotki/Desktop/cpp_refactor";
 cd $PROJECT/src;
-../build/stereo;
+../build/stereo -m stream --mode display_mode --frame_limit 50;
