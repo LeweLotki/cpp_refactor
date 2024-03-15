@@ -18,8 +18,9 @@ int main(int argc, char* argv[]) {
         case Module::Stream: {
             Stream stream;
             std::string mode = vm["mode"].as<std::string>();
+            std::string output_dir = vm["output_dir"].as<std::string>();
             int frame_limit = vm["frame_limit"].as<int>();
-            stream.run(mode, "../stream_output",frame_limit);
+            stream.run(mode, output_dir, frame_limit);
             break;
         }
         default:
