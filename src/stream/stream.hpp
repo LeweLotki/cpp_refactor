@@ -6,6 +6,16 @@
 #include <string>
 #include <vector>
 #include <boost/filesystem.hpp>
+#include <boost/filesystem/operations.hpp>
+#include <mutex>
+#include <thread>
+
+#ifndef ESC_KEY
+#define ESC_KEY 27
+#endif
+#ifndef s_KEY
+#define s_KEY 115
+#endif
 
 class Stream
 {
@@ -18,6 +28,8 @@ class Stream
     cv::VideoCapture cap;
     int resolution[2];
     int frame_limit;
+    cv::Mat frame;
+    mutable std::mutex frame_mutex;
 
     enum Modes
     {
@@ -37,6 +49,7 @@ class Stream
             int frame_limit=(int)1e3
         );
         void set_resolution(int* resolution[]);
+        cv::Mat get_current_frame() const;
 
     private:
 

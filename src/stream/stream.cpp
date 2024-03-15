@@ -1,13 +1,4 @@
 #include "stream.hpp"
-#include <boost/filesystem/operations.hpp>
-#include <iostream>
-
-#ifndef ESC_KEY
-#define ESC_KEY 27
-#endif
-#ifndef s_KEY
-#define s_KEY 115
-#endif
 
 namespace filesystem  = boost::filesystem;
 
@@ -69,6 +60,8 @@ void Stream::display_mode()
 
         imshow("stream", frame);
 
+        this->frame = frame; 
+
         if ((char)cv::waitKey(29) == (char)ESC_KEY) { break; } 
         if (frame_limit != -1 && ((char)cv::waitKey(31) == (char)s_KEY || save_mode)) 
         {
@@ -109,6 +102,8 @@ void Stream::save_display_mode()
 
         imshow("stream", frame);
 
+        this->frame = frame; 
+
         if ((char)cv::waitKey(29) == (char)ESC_KEY) { break; } 
         
         if (first_iter)
@@ -142,7 +137,9 @@ void Stream::save_mode()
             std::cerr << "ERROR! empty image\n";
             break;
         }
-
+        
+        this->frame = frame;
+        
         if ((char)cv::waitKey(29) == (char)ESC_KEY) { break; } 
         
         if (first_iter)
@@ -177,6 +174,8 @@ void Stream::void_mode()
             break;
         }
 
+        this->frame = frame; 
+        
         if ((char)cv::waitKey(29) == (char)ESC_KEY) { break; } 
         if (frame_limit != -1 && ((char)cv::waitKey(31) == (char)s_KEY || save_mode)) 
         {
@@ -192,6 +191,12 @@ void Stream::void_mode()
         }
         frame_count += 1;
     }
+}
+
+cv::Mat Stream::get_current_frame() const 
+{
+    std::lock_guard<std::mutex> lock(this->frame_mutex);
+    return this->frame.clone();
 }
 
 void Stream::open_camera()
