@@ -3,8 +3,9 @@
 #include <vector>
 #include <string>
 #include <boost/filesystem>
-#include <vector>
-
+#include <boost/filesystem/operations.hpp>
+#include <iostream>
+#include <glob>
 
 class StereoCalibration {
 
@@ -33,10 +34,12 @@ class StereoCalibration {
     public:
 
         StereoCalibration();
-        StereoCalibration(std::string output_dir);
-        StereoCalibration(std::string mode);
+        StereoCalibration(boost::filesystem::path output_dir);
+        void calibrate(std::string mode="default");
 
-        void find_chessboard_corners(const std::string& images_dir, const cv::Size& chessboardSize, const cv::TermCriteria& criteria); // przyjmuje nazwe zdjecia, zdeklarowany w atrybutach chessboardsize i criteria
+    private:
+
+        void find_chessboard_corners(); // przyjmuje nazwe zdjecia, zdeklarowany w atrybutach chessboardsize i criteria
         void calibrate_camera(); // przyjmuje atrybuty a zwraca macierz i dist (int?)
         void stereocalibrate(); // przyjmuje zeklarowane atrybuty: obpoints, imgpoints L & R i imageSize, 2 macierze cameraMatrix Li R dist L & R zwraca 4 macierze
         void save_calibration_files(); // przyjmuje z atrybutow output_dir, cameraMarix L & R dist L & R i macierze R i T 
