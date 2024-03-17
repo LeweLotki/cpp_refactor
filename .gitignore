@@ -5,8 +5,10 @@ CMakePresets.json
 *.png
 *.vim
 CMakeFiles/*
+.vscode
 temp
 test
-*.swp
 .vimspector.json
+*.swp
+
 

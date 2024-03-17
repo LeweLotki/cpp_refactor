@@ -1,8 +1,7 @@
-PROJECT="/home/lewelotki/Desktop/cpp_refactor";
+PROJECT=$(pwd);
 cd $PROJECT;
 rm -rf build/           
-mkdir build
-cmake -S . -B build 
+cmake cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug .
 ./.cmp;
 ./.run;
 
