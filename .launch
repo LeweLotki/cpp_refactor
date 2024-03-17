@@ -1,4 +1,4 @@
-PROJECT="/home/malibubarbie/Pulpit/dubaj_cpp/cpp_refactor";
+PROJECT=$(pwd);
 cd $PROJECT;
 rm -rf build/           
 cmake cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug .

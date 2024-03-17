@@ -9,4 +9,6 @@ CMakeFiles/*
 temp
 test
 .vimspector.json
+*.swp
+
 

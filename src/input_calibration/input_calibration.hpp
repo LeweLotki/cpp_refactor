@@ -2,10 +2,9 @@
 #include <opencv2/core.hpp>
 #include <vector>
 #include <string>
-#include <boost/filesystem>
+#include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <iostream>
-#include <glob>
 
 class StereoCalibration {
 
@@ -26,7 +25,7 @@ class StereoCalibration {
 
     
     float criteria[3] = {
-        (float)cv::TERM_CRITERIA_EPS + (float)cv::TERM_CRITERIA_MAX_ITER,
+        (float)cv::TermCriteria::EPS + (float)cv::TermCriteria::MAX_ITER,
         30, 
         0.001
     };
