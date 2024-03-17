@@ -7,4 +7,6 @@ CMakePresets.json
 CMakeFiles/*
 temp
 test
+*.swp
+.vimspector.json
 
