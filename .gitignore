@@ -5,6 +5,7 @@ CMakePresets.json
 *.png
 *.vim
 CMakeFiles/*
+.vscode
 temp
 test
 .vimspector.json
