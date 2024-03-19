@@ -61,6 +61,7 @@ void Stream::display_mode()
         imshow("stream", frame);
 
         this->frame = frame; 
+        this -> notify_observers(this->frame);
 
         if ((char)cv::waitKey(29) == (char)ESC_KEY) { break; } 
         if (frame_limit != -1 && ((char)cv::waitKey(31) == (char)s_KEY || save_mode)) 
@@ -103,6 +104,7 @@ void Stream::save_display_mode()
         imshow("stream", frame);
 
         this->frame = frame; 
+        this -> notify_observers(this->frame);
 
         if ((char)cv::waitKey(29) == (char)ESC_KEY) { break; } 
         
@@ -139,7 +141,8 @@ void Stream::save_mode()
         }
         
         this->frame = frame;
-        
+        this -> notify_observers(this->frame);
+       
         if ((char)cv::waitKey(29) == (char)ESC_KEY) { break; } 
         
         if (first_iter)
@@ -175,7 +178,8 @@ void Stream::void_mode()
         }
 
         this->frame = frame; 
-        
+        this -> notify_observers(this->frame);
+       
         if ((char)cv::waitKey(29) == (char)ESC_KEY) { break; } 
         if (frame_limit != -1 && ((char)cv::waitKey(31) == (char)s_KEY || save_mode)) 
         {

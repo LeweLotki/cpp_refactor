@@ -8,21 +8,34 @@ StereoCalibration::StereoCalibration()
     int frame_size[2] = { 672, 376 };
     int size_of_chessboard_squares_mm = 20;
     output_dir = "../calibration_files";
+    mode = "default";
 }
 
 
-StereoCalibration::StereoCalibration(filesystem::path output_dir) 
+StereoCalibration::StereoCalibration(std::string mode, filesystem::path output_dir) 
 {
      int chessboard_size[2] = { 7, 7 };
      int frame_size[2] = { 672, 376 };
      int size_of_chessboard_squares_mm = 20;
      this->output_dir = output_dir;
+     this->mode = mode;
 }
 
 
-void calibrate(std::string mode) 
+void StereoCalibration::calibrate(cv::Mat frame) 
 {
-    // tu cała logika z kodu ycalib.py 
+    std::cout << "New frame just dropped" << std::endl;
+
+}
+
+void StereoCalibration::update(const cv::Mat& frame) 
+{
+    this -> calibrate(frame);
+}
+
+void StereoCalibration::test_method()
+{
+    std::cout << "Starting calibration" << std::endl;
 }
 
 void StereoCalibration::find_chessboard_corners()

@@ -10,6 +10,8 @@
 #include <mutex>
 #include <thread>
 
+#include "../observer/distributor.hpp"
+
 #ifndef ESC_KEY
 #define ESC_KEY 27
 #endif
@@ -17,7 +19,7 @@
 #define s_KEY 115
 #endif
 
-class Stream
+class Stream : public Distributor<cv::Mat>
 {
     unsigned int frame_count = 0;
     boost::filesystem::path output_dir;
