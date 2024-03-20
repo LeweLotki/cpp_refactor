@@ -1,37 +1,25 @@
 #pragma once
+
 #include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/calib3d.hpp>
 #include <vector>
 #include <string>
 #include <boost/filesystem.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <iostream>
 
 #include "../observer/observer.hpp"
 
 class StereoCalibration : public Observer<cv::Mat>
 {
 
-    int chessboard_size[2] = { 7, 7 };
-    int frame_size[2] = { 672, 376 };
-    int size_of_chessboard_squares_mm = 20;
-    std::string mode;
-    // boost::filesystem::path
-    // potem dorób dla L i R z join
-    
+    cv::Size chessboard_size;
+    int size_of_chessboard_squares_mm;
+
     boost::filesystem::path output_dir;
-
-    std::vector<std::vector<float>> objp;
-    std::vector<std::vector<float>> obj_points_L;
-    std::vector<std::vector<float>> obj_points_R;
-    std::vector<std::vector<float>> img_points_L;
-    std::vector<std::vector<float>> img_points_R;
-
-    
-    float criteria[3] = {
-        (float)cv::TermCriteria::EPS + (float)cv::TermCriteria::MAX_ITER,
-        30, 
-        0.001
-    };
+    cv::TermCriteria criteria;
+    std::string mode;
 
     public:
 
@@ -48,4 +36,16 @@ class StereoCalibration : public Observer<cv::Mat>
         void save_calibration_files(); // przyjmuje z atrybutow output_dir, cameraMarix L & R dist L & R i macierze R i T 
         void test_method();
 
+        std::vector<std::vector<cv::Point3f>> obj_points;
+        std::vector<std::vector<cv::Point2f>> img_points_L;
+        std::vector<std::vector<cv::Point2f>> img_points_R;
+
+    
+        void find_chessboard_corners(const std::string& images_dir, const cv::Size& chessboardSize, const cv::TermCriteria& criteria);
+// >>>>>>> julka
+
+// private:
+//     void calibrate_camera(); // Placeholder
+//     void stereo_calibrate(); // Placeholder
+//     void save_calibration_files(); // Placeholder
 };
