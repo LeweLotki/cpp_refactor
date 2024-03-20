@@ -1,5 +1,5 @@
 #pragma once
-
+#include <iostream>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core.hpp>
 #include <opencv2/imgcodecs.hpp>
@@ -41,7 +41,7 @@ class StereoCalibration : public Observer<cv::Mat>
         std::vector<std::vector<cv::Point2f>> img_points_R;
 
     
-        void find_chessboard_corners(const std::string& images_dir, const cv::Size& chessboardSize, const cv::TermCriteria& criteria);
+        void find_chessboard_corners(cv::Mat frame);
 // >>>>>>> julka
 
 // private:
