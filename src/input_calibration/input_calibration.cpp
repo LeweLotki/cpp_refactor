@@ -25,7 +25,8 @@ StereoCalibration::StereoCalibration(std::string mode, filesystem::path output_d
 void StereoCalibration::calibrate(cv::Mat frame) 
 {
     std::cout << "New frame just dropped" << std::endl;
-
+    imshow("calibration", frame);
+    cv::waitKey(5000); 
 }
 
 void StereoCalibration::update(const cv::Mat& frame) 

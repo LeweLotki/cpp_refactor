@@ -179,7 +179,8 @@ void Stream::void_mode()
 
         this->frame = frame; 
         this -> notify_observers(this->frame);
-       
+        // std::cout << "stream capture frame" << std::endl;
+
         if ((char)cv::waitKey(29) == (char)ESC_KEY) { break; } 
         if (frame_limit != -1 && ((char)cv::waitKey(31) == (char)s_KEY || save_mode)) 
         {
