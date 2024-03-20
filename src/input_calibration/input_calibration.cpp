@@ -1,70 +1,42 @@
-#include "input_calibration.hpp"
-#include<glob.h>
-#include <iostream>
-#include <vector>
-#include <filesystem>
-#include <opencv2/opencv.hpp>
+#include "StereoCalibration.hpp"
+#include <boost/filesystem.hpp>
+#include <opencv2/highgui.hpp>
 
-namespace filesystem  = boost::filesystem;
-using namespace cv;
+StereoCalibration::StereoCalibration() : chessboard_size(7, 7), size_of_chessboard_squares_mm(20), output_dir("Calibration_Files"), criteria(cv::TermCriteria::EPS + cv::TermCriteria::MAX_ITER, 30, 0.001) {}
 
-StereoCalibration::StereoCalibration()
-{
-    int chessboard_size[2] = { 7, 7 };
-    int frame_size[2] = { 672, 376 };
-    int size_of_chessboard_squares_mm = 20;
-    output_dir = "../calibration_files";
-}
+StereoCalibration::StereoCalibration(boost::filesystem::path output_dir) : chessboard_size(7, 7), size_of_chessboard_squares_mm(20), output_dir(output_dir), criteria(cv::TermCriteria::EPS + cv::TermCriteria::MAX_ITER, 30, 0.001) {}
 
-
-StereoCalibration::StereoCalibration(filesystem::path output_dir) 
-{
-     int chessboard_size[2] = { 7, 7 };
-     int frame_size[2] = { 672, 376 };
-     int size_of_chessboard_squares_mm = 20;
-     this->output_dir = output_dir;
-}
-
-
-void calibrate(std::string mode) 
-{
-    // tu cała logika z kodu ycalib.py 
-}
-
-
-
-// jak mieć dostęp do zdeklarowanych w konstruktorze zmiennych? i jak do kryteriów
-// nw o co chodzi arturowi z tym kom z klasami
-
-void find_chessboard_corners() {
-
-    std::vector<std::string> images; // tworze wektor o nazwie images
-    for (const auto& entry : filesystem::directory_iterator(images_dir)) { // iteracja po plikach z katalogu images_dir
-        if (entry.path().extension() == ".png") { // jeżeli warunek jest spełniony
-            images.push_back(entry.path().string()); // dodawany jest do wektora images
-        }
-    }
-    std::sort(images.begin(), images.end()); // sortowanie alfabetyczne
-    
-    std::vector<Point3f> objp; // tworzenie wektora 3D obrazującego szachownice
-    for (int i = 0; i < chessboard_size.height; ++i) {
-        for (int j = 0; j < chessboard_size.width; ++j) {
-            objp.push_back(Point3f(j * 20, i * 20, 0)); // 20 bo size_of_chessboard_squares_mm = 20;
+void StereoCalibration::find_chessboard_corners(const std::string& images_dir, const cv::Size& chessboardSize, const cv::TermCriteria& criteria) {
+    std::vector<cv::Point3f> objp;
+    for (int i = 0; i < chessboardSize.height; ++i) {
+        for (int j = 0; j < chessboardSize.width; ++j) {
+            objp.push_back(cv::Point3f(j * size_of_chessboard_squares_mm, i * size_of_chessboard_squares_mm, 0));
         }
     }
 
-    for (const auto& img_path : images) { // iteruje przez wszystkie ścieżki po wektorze images
-        Mat img = imread(img_path); // tworzy macierz wczytującą każdą ścieżkę zdjęcia
-        Mat gray; // macierz na szare zdj
-        cvtColor(img, gray, COLOR_BGR2GRAY); // przetworzenie zdj na szare
+    boost::filesystem::path dir(images_dir);
+    boost::filesystem::directory_iterator end_iter;
 
-        std::vector<Point2f> corners; // tworzenie wektora 2D na rogi
-        bool ret = findChessboardCorners(gray, chessboard_size, corners); // sprawdzenie warunku czy róg został znaleziony
+    for (boost::filesystem::directory_iterator dir_iter(dir); dir_iter != end_iter; ++dir_iter) {
+        if (boost::filesystem::is_regular_file(dir_iter->status())) {
+            cv::Mat img = cv::imread(dir_iter->path().string());
+            cv::Mat gray;
+            cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
 
-        if (ret) {
-            cornerSubPix(gray, corners, Size(11, 11), Size(-1, -1), criteria); // po znalezieniu rogów chcemy znać dokładniejszą pozycję rogów
-            std::vector<Point2f>imgpoints_temp.push_back(corners); 
-            std::vector<Point3f> objpoints_temp.push_back(objp); // w tych linijkach cos ewidentnie zepsulam
+            std::vector<cv::Point2f> corners;
+            bool found = cv::findChessboardCorners(gray, chessboardSize, corners);
+
+            if (found) {
+                cv::cornerSubPix(gray, corners, cv::Size(11, 11), cv::Size(-1, -1), criteria);
+                img_points_L.push_back(corners); // Przykład dla obrazów z lewej kamery
+                obj_points.push_back(objp);
+            }
         }
     }
 }
+
+// Placeholder implementations for the remaining methods
+void StereoCalibration::calibrate(std::string mode) {}
+void StereoCalibration::calibrate_camera() {}
+void StereoCalibration::stereo_calibrate() {}
+void StereoCalibration::save_calibration_files() {}
