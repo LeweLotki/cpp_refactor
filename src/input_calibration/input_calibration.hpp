@@ -20,6 +20,7 @@ class StereoCalibration : public Observer<cv::Mat>
     boost::filesystem::path output_dir;
     cv::TermCriteria criteria;
     std::string mode;
+    cv::Mat frame;
 
     public:
 
@@ -32,10 +33,9 @@ class StereoCalibration : public Observer<cv::Mat>
 
         void find_chessboard_corners(); // przyjmuje nazwe zdjecia, zdeklarowany w atrybutach chessboardsize i criteria
         void calibrate_camera(); // przyjmuje atrybuty a zwraca macierz i dist (int?)
-        void stereocalibrate(); // przyjmuje zeklarowane atrybuty: obpoints, imgpoints L & R i imageSize, 2 macierze cameraMatrix Li R dist L & R zwraca 4 macierze
+        void stereo_calibrate(cv::Mat& cameraMatrixL, cv::Mat& distCoeffsL,cv::Mat& cameraMatrixR, cv::Mat& distCoeffsR); // przyjmuje zeklarowane atrybuty: obpoints, imgpoints L & R i imageSize, 2 macierze cameraMatrix Li R dist L & R zwraca 4 macierze
         void save_calibration_files(); // przyjmuje z atrybutow output_dir, cameraMarix L & R dist L & R i macierze R i T 
-        void test_method();
-
+        std::vector<cv::Mat> subdivide_camera_image();
         std::vector<std::vector<cv::Point3f>> obj_points;
         std::vector<std::vector<cv::Point2f>> img_points_L;
         std::vector<std::vector<cv::Point2f>> img_points_R;

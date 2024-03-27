@@ -18,6 +18,7 @@ void StereoCalibration::calibrate(cv::Mat frame)
     // imshow("calibration", frame);
     // cv::waitKey(5000); 
     this -> find_chessboard_corners(frame);
+    
 }
 
 void StereoCalibration::update(const cv::Mat& frame) 
@@ -27,6 +28,7 @@ void StereoCalibration::update(const cv::Mat& frame)
 
 void StereoCalibration::find_chessboard_corners(cv::Mat frame) {
     
+    
     std::vector<cv::Point3f> objp;
     for (int i = 0; i < chessboard_size.height; ++i) {
         for (int j = 0; j < chessboard_size.width; ++j) {
@@ -34,9 +36,6 @@ void StereoCalibration::find_chessboard_corners(cv::Mat frame) {
             
         }
     }
-
-    
-
         cv::Mat gray;
         cv::cvtColor(frame, gray, cv::COLOR_BGR2GRAY);
 
@@ -47,9 +46,77 @@ void StereoCalibration::find_chessboard_corners(cv::Mat frame) {
             cv::cornerSubPix(gray, corners, cv::Size(11, 11), cv::Size(-1, -1), criteria);
             img_points_L.push_back(corners); // Przykład dla obrazów z lewej kamery
             obj_points.push_back(objp);
-            
+            this -> frame = frame;
+            calibrate_camera();
         }
         std::cout << found << std::endl;
 }
 
 
+std::vector<cv::Mat> StereoCalibration::subdivide_camera_image()
+{
+    cv::Mat frame_left = frame(
+        
+        cv::Range(0, frame.size().width), 
+        cv::Range(0, (int)(frame.size().height / 2))
+    );
+    cv::Mat frame_right = frame(
+        cv::Range(0, frame.size().width), 
+        cv::Range((int)(frame.size().height / 2), frame.size().height)
+    );
+    
+    std::vector<cv::Mat> frames { frame_left, frame_right };    
+
+    return frames;
+}
+
+void StereoCalibration::calibrate_camera(){
+    bool retL, retR;
+    cv::Mat cameraMatrixL = cv::Mat::eye(3, 3, CV_64F);
+    cv::Mat cameraMatrixR = cv::Mat::eye(3, 3, CV_64F);
+    cv::Mat distCoeffsL;
+    cv::Mat distCoeffsR;
+    std::vector<cv::Mat> rvecs, tvecs;
+
+    std::vector<cv::Mat> frames = subdivide_camera_image();
+
+    cv::Mat frame_L = frames[0];
+    cv::Mat frame_R = frames[1];
+
+    retL = cv::calibrateCamera(obj_points, img_points_L, frame.size() , cameraMatrixL, distCoeffsL, rvecs, tvecs);
+    retR = cv::calibrateCamera(obj_points, img_points_R, frame.size() , cameraMatrixR, distCoeffsR, rvecs, tvecs);
+    
+    if(retL && retR) {
+        // Tutaj możesz kontynuować z przetworzonymi danymi, np. zapisując je do pliku lub dalej je przekazując.
+        // Poniżej znajduje się przykład, jak można by zwrócić te dane, gdyby ta funkcja była częścią większej klasy.
+        stereo_calibrate(cameraMatrixL, distCoeffsL, cameraMatrixR, distCoeffsR);
+        
+    } else {
+        std::cout << "blad" << std::endl;
+        // Obsługa błędu, np. poprzez zwrócenie pustych macierzy lub zgłoszenie wyjątku
+        // return std::make_pair(cv::Mat(), cv::Mat());
+    }
+}
+
+void StereoCalibration::stereo_calibrate(cv::Mat& cameraMatrixL, cv::Mat& distCoeffsL,cv::Mat& cameraMatrixR, cv::Mat& distCoeffsR)
+{
+  
+    int flags = cv::CALIB_FIX_INTRINSIC;
+
+    cv::Mat R, T, E, F; // Macierze wynikowe
+
+    bool ret = cv::stereoCalibrate(
+        obj_points, img_points_L, img_points_R,
+        cameraMatrixL, distCoeffsL,
+        cameraMatrixR, distCoeffsR,
+        frame.size(), R, T, E, F,
+        criteria, flags
+    );
+    // bool ret = true;
+    if(ret) {
+        // Możesz teraz korzystać z R, T, E, F
+        // Na przykład, zwróć te wartości lub zapisz je gdzieś
+    } else {
+        // Obsługa błędu kalibracji
+    }
+}
